@@ -19,7 +19,6 @@ This crate exposes `AssetsExtension` struct that implement all functions of pall
 ```toml
 assets_extension = {  git = "https://github.com/swanky-dapps/chain-extension-contracts", default-features = false }
 assets-chain-extension-types = { git = "https://github.com/AstarNetwork/astar-frame", branch = "polkadot-v0.9.36", default-features = false, features = ["ink-no-std"] }
-...
 
 [features]
 default = ["std"]
@@ -55,7 +54,6 @@ This crate exposes `DappsStaking` struct that implement all functions of dapps-s
 1. add `dapps_staking_extension` in your `Cargo.toml` and to the `std` `features`
 ```toml
 dapps_staking_extension = { git = "https://github.com/swanky-dapps/chain-extension-contracts", default-features = false }
-...
 
 [features]
 default = ["std"]
