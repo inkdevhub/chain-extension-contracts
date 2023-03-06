@@ -3,7 +3,7 @@
 
 #[openbrush::contract]
 pub mod psp22_pallet_wrapper {
-    use assets_chain_extension_types::Origin;
+    use assets_extension::Origin;
     use assets_extension::*;
     use ink::codegen::{
         EmitEvent,
@@ -74,11 +74,12 @@ pub mod psp22_pallet_wrapper {
             self.asset_id
         }
 
+        /// Caller should approve contract address as spender beforehand
         #[ink(message)]
         pub fn deposit(&mut self, amount: Balance) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
             let contract = self.env().account_id();
-            AssetsExtension::transfer(Origin::Caller, self.asset_id, contract, amount)
+            AssetsExtension::transfer_approved(Origin::Address, self.asset_id, caller, contract,  amount)
                 .map_err(|_| PSP22Error::Custom("transfer failed".into()))?;
             self._mint_to(caller, amount)
         }
