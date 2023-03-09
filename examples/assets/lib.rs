@@ -23,8 +23,7 @@ pub mod contract {
         #[ink(message, payable)]
         pub fn create(&mut self, asset_id: u128, min_balance: Balance) -> Result<(), AssetsError> {
             let contract = self.env().account_id();
-            AssetsExtension::create(Origin::Address, asset_id, contract, min_balance)?;
-            Ok(())
+            AssetsExtension::create(Origin::Address, asset_id, contract, min_balance)
         }
 
         #[ink(message)]
@@ -114,6 +113,52 @@ pub mod contract {
         #[ink(message)]
         pub fn metadata_decimals(&self, asset_id: u128) -> u8 {
             AssetsExtension::metadata_decimals(asset_id)
+        }
+
+        #[ink(message)]
+        pub fn start_destroy(
+            &mut self,
+            asset_id: u128,
+        ) -> Result<(), AssetsError> {
+            AssetsExtension::start_destroy(Origin::Address, asset_id)?;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn destroy_accounts(
+            &mut self,
+            asset_id: u128,
+        ) -> Result<(), AssetsError> {
+            AssetsExtension::destroy_accounts(Origin::Address, asset_id)?;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn destroy_approvals(
+            &mut self,
+            asset_id: u128,
+        ) -> Result<(), AssetsError> {
+            AssetsExtension::destroy_approvals(Origin::Address, asset_id)?;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn finish_destroy(
+            &mut self,
+            asset_id: u128,
+        ) -> Result<(), AssetsError> {
+            AssetsExtension::finish_destroy(Origin::Address, asset_id)?;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn transfer_ownership(
+            &mut self,
+            asset_id: u128,
+            owner: AccountId,
+        ) -> Result<(), AssetsError> {
+            AssetsExtension::transfer_ownership(Origin::Address, asset_id, owner)?;
+            Ok(())
         }
     }
 }

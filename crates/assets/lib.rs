@@ -137,6 +137,62 @@ impl AssetsExtension {
             .ignore_error_code()
             .call(&id)
     }
+
+    pub fn start_destroy(
+        origin: Origin,
+        id: u128,
+    ) -> Result<(), AssetsError> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000F)
+            .input::<(Origin, u128)>()
+            .output::<Result<(), AssetsError>, true>()
+            .handle_error_code::<AssetsError>()
+            .call(&(origin, id))
+    }
+
+    pub fn destroy_accounts(
+        origin: Origin,
+        id: u128,
+    ) -> Result<(), AssetsError> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60010)
+            .input::<(Origin, u128)>()
+            .output::<Result<(), AssetsError>, true>()
+            .handle_error_code::<AssetsError>()
+            .call(&(origin, id))
+    }
+
+    pub fn destroy_approvals(
+        origin: Origin,
+        id: u128,
+    ) -> Result<(), AssetsError> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60011)
+            .input::<(Origin, u128)>()
+            .output::<Result<(), AssetsError>, true>()
+            .handle_error_code::<AssetsError>()
+            .call(&(origin, id))
+    }
+
+    pub fn finish_destroy(
+        origin: Origin,
+        id: u128,
+    ) -> Result<(), AssetsError> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60012)
+            .input::<(Origin, u128)>()
+            .output::<Result<(), AssetsError>, true>()
+            .handle_error_code::<AssetsError>()
+            .call(&(origin, id))
+    }
+
+    pub fn transfer_ownership(
+        origin: Origin,
+        id: u128,
+        owner: AccountId,
+    ) -> Result<(), AssetsError> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60012)
+            .input::<(Origin, u128, AccountId)>()
+            .output::<Result<(), AssetsError>, true>()
+            .handle_error_code::<AssetsError>()
+            .call(&(origin, id, owner))
+    }
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, Encode, Decode, Debug)]
@@ -176,6 +232,15 @@ pub enum AssetsError {
     NoDeposit = 14,
     /// The operation would result in funds being burned.
     WouldBurn = 15,
+    /// The asset is a live asset and is actively being used. Usually emit for operations such
+    /// as `start_destroy` which require the asset to be in a destroying state.
+    LiveAsset = 16,
+    /// The asset is not live, and likely being destroyed.
+    AssetNotLive = 17,
+    /// The asset status is not the expected status.
+    IncorrectStatus = 18,
+    /// The asset should be frozen before the given operation.
+    NotFrozen = 19,
     /// Origin Caller is not supported
     OriginCannotBeCaller = 98,
     /// Unknown error
@@ -205,6 +270,10 @@ impl ink::env::chain_extension::FromStatusCode for AssetsError {
             13 => Err(Self::AlreadyExists),
             14 => Err(Self::NoDeposit),
             15 => Err(Self::WouldBurn),
+            16 => Err(Self::LiveAsset),
+            17 => Err(Self::AssetNotLive),
+            18 => Err(Self::IncorrectStatus),
+            19 => Err(Self::NotFrozen),
             98 => Err(Self::OriginCannotBeCaller),
             99 => Err(Self::RuntimeError),
             _ => Err(Self::UnknownStatusCode),
