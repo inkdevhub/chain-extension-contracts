@@ -17,7 +17,7 @@ impl AssetsExtension {
     pub fn create(origin: Origin, id: u128, admin: AccountId, min_balance: Balance) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60001)
             .input::<(Origin, u128, AccountId, Balance)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, admin, min_balance))
     }
@@ -25,7 +25,7 @@ impl AssetsExtension {
     pub fn transfer(origin: Origin, id: u128, target: AccountId, min_balance: Balance) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60002)
             .input::<(Origin, u128, AccountId, Balance)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, target, min_balance))
     }
@@ -33,7 +33,7 @@ impl AssetsExtension {
     pub fn mint(origin: Origin, id: u128, beneficiary: AccountId, amount: Balance) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60003)
             .input::<(Origin, u128, AccountId, Balance)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, beneficiary, amount))
     }
@@ -41,7 +41,7 @@ impl AssetsExtension {
     pub fn burn(origin: Origin, id: u128, who: AccountId, amount: Balance) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60004)
             .input::<(Origin, u128, AccountId, Balance)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, who, amount))
     }
@@ -73,7 +73,7 @@ impl AssetsExtension {
     pub fn approve_transfer(origin: Origin, id: u128, delegate: AccountId, amount: Balance) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60008)
             .input::<(Origin, u128, AccountId, Balance)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, delegate, amount))
     }
@@ -81,7 +81,7 @@ impl AssetsExtension {
     pub fn cancel_approval(origin: Origin, id: u128, delegate: AccountId) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60009)
             .input::<(Origin, u128, AccountId)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, delegate))
     }
@@ -95,7 +95,7 @@ impl AssetsExtension {
     ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000A)
             .input::<(Origin, u128, AccountId, AccountId, Balance)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, owner, destination, amount))
     }
@@ -109,7 +109,7 @@ impl AssetsExtension {
     ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000B)
             .input::<(Origin, u128, Vec<u8>, Vec<u8>, u8)>()
-            .output::<(), false>()
+            .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
             .call(&(origin, id, name, symbol, decimals))
     }
@@ -181,7 +181,9 @@ pub enum AssetsError {
     /// Unknown error
     RuntimeError = 99,
     /// Unknow status code
-    UnknownStatusCode
+    UnknownStatusCode,
+    /// Encountered unexpected invalid SCALE encoding
+    InvalidScaleEncoding,
 }
 
 impl ink::env::chain_extension::FromStatusCode for AssetsError {
@@ -209,6 +211,12 @@ impl ink::env::chain_extension::FromStatusCode for AssetsError {
         }
     }
 }
+impl From<scale::Error> for AssetsError {
+    fn from(_: scale::Error) -> Self {
+        AssetsError::InvalidScaleEncoding
+    }
+}
+
 
 #[derive(Clone, Copy, Decode, Encode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout))]

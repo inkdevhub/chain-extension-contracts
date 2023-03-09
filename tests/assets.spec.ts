@@ -37,114 +37,108 @@ describe('ASSETS', () => {
         assets = new assets_contract((await assetsConstructor.new()).address, alice, api);
     })
 
-    afterEach( async function() {
-        await buildTx(api.registry, api.tx.assets.startDestroy(ASSET_ID), assets.signer)
-        // Should be done 2 times because sometimes fails with InUse Error
-        await buildTx(api.registry, api.tx.assets.destroyApprovals(ASSET_ID), assets.signer)
-        await buildTx(api.registry, api.tx.assets.destroyAccounts(ASSET_ID), assets.signer)
-        await buildTx(api.registry, api.tx.assets.destroyApprovals(ASSET_ID), assets.signer)
-        await buildTx(api.registry, api.tx.assets.destroyAccounts(ASSET_ID), assets.signer)
-        await buildTx(api.registry, api.tx.assets.finishDestroy(ASSET_ID), assets.signer)
-    })
-
     it('create works', async () => {
         let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
             value: 1000000,
         });
         await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: 1000000 });
 
+        const prefix = api.consts.system.ss58Prefix
         // @ts-ignore
-        await expect((await api.query.assets.asset(1)).unwrapOrDefault().owner.toU8a().toString()).to.equal(assets.signer.addressRaw.toString())
+        const assetAddress = keyring.encodeAddress(assets.address, prefix);
+        // @ts-ignore
+        await expect((await api.query.assets.asset(1)).unwrapOrDefault().owner.toString()).to.equal(assetAddress)
     })
-    //
-    // it('mint works', async () => {
-    //     let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-    //         value: 1000000,
-    //     });
-    //     await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: 1000000 });
-    //
-    //     let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address,1000);
-    //     await assets.tx.mint(ASSET_ID,  alice.address,1000,{gasLimit: gas2 });
-    //
-    //     // @ts-ignore
-    //     await expect((await api.query.assets.account(ASSET_ID, alice.address)).unwrapOrDefault().balance.toNumber()).to.equal(1000)
-    // })
-    //
-    // it('burn works', async () => {
-    //     let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-    //         value: 1000000,
-    //     });
-    //     await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: 1000000 });
-    //
-    //     let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address,1000);
-    //     await assets.tx.mint(ASSET_ID, alice.address, 1000,{gasLimit: gas2 });
-    //
-    //     let { gasRequired: gas3 }  = await assets.query.burn(ASSET_ID, alice.address,100);
-    //     await assets.tx.burn(ASSET_ID,  alice.address,100,{gasLimit: gas3 });
-    //
-    //     // @ts-ignore
-    //     await expect((await api.query.assets.account(ASSET_ID, alice.address)).unwrapOrDefault().balance.toNumber()).to.equal(1000 - 100)
-    // })
-    //
-    // it('balance_of and total_supply are correct', async () => {
-    //     let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-    //         value: 1000000,
-    //     });
-    //     await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: 1000000 });
-    //
-    //     let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address,1000);
-    //     await assets.tx.mint(ASSET_ID, alice.address,1000,{gasLimit: gas2 });
-    //
-    //     // @ts-ignore
-    //     await expect((await assets.query.balanceOf(ASSET_ID, alice.address)).value.unwrap().toNumber()).to.equal(1000)
-    //
-    //     // @ts-ignore
-    //     await expect((await assets.query.totalSupply(1)).value.unwrap().toNumber()).to.equal(1000)
-    // })
-    //
-    // it('approve transfer and check allowance', async () => {
-    //     let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-    //         value: 1000000,
-    //     });
-    //     await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: 1000000 });
-    //
-    //     let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address, 1000);
-    //     await assets.tx.mint(ASSET_ID, alice.address,1000,{gasLimit: gas2 });
-    //
-    //     let { gasRequired: gas3 }  = await assets.query.approveTransfer(ASSET_ID,bob.address, 100);
-    //     await assets.tx.approveTransfer(ASSET_ID, bob.address, 100, {gasLimit: gas3 });
-    //
-    //     // @ts-ignore
-    //     await expect((await assets.query.allowance(ASSET_ID, alice.address, bob.address)).value.unwrap().toNumber()).to.equal(100)
-    // })
-    //
-    // it('approve transfer, transfer and check balances', async () => {
-    //     let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-    //         value: 1000000,
-    //     });
-    //     await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: 1000000 });
-    //
-    //     let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address,1000);
-    //     await assets.tx.mint(ASSET_ID, alice.address, 1000,{gasLimit: gas2 });
-    //
-    //     let { gasRequired: gas3 }  = await assets.query.approveTransfer(ASSET_ID,bob.address, 100);
-    //     await assets.tx.approveTransfer(ASSET_ID, bob.address, 100, {gasLimit: gas3 });
-    //
-    //     let { gasRequired: gas4}  = await assets.withSigner(bob).query.transferApproved(ASSET_ID, alice.address, charlie.address, 50);
-    //     await assets.withSigner(bob).tx.transferApproved(ASSET_ID, alice.address, charlie.address, 50, {gasLimit: gas4});
-    //
-    //     // @ts-ignore
-    //     await expect((await assets.query.allowance(ASSET_ID, alice.address, bob.address)).value.unwrap().toNumber()).to.equal(50)
-    //
-    //     // @ts-ignore
-    //     await expect((await assets.query.balanceOf(ASSET_ID, alice.address)).value.unwrap().toNumber()).to.equal(950)
-    //
-    //     // @ts-ignore
-    //     await expect((await assets.query.balanceOf(ASSET_ID, bob.address)).value.unwrap().toNumber()).to.equal(0)
-    //
-    //     // @ts-ignore
-    //     await expect((await assets.query.balanceOf(ASSET_ID, charlie.address)).value.unwrap().toNumber()).to.equal(50)
-    // })
+
+    it('mint works', async () => {
+        let { gasRequired: gas }  = await assets.query.create(2,1, {
+            value: 1000000,
+        });
+        await assets.tx.create(2, 1,{gasLimit: gas, value: 1000000 });
+
+        let { gasRequired: gas2 }  = await assets.query.mint(2, alice.address,1000);
+        await assets.tx.mint(2,  alice.address,1000,{gasLimit: gas2 });
+
+        // @ts-ignore
+        await expect((await api.query.assets.account(2, alice.address)).unwrapOrDefault().balance.toNumber()).to.equal(1000)
+    })
+
+    it('burn works', async () => {
+        let { gasRequired: gas }  = await assets.query.create(3,1, {
+            value: 1000000,
+        });
+        await assets.tx.create(3, 1,{gasLimit: gas, value: 1000000 });
+
+        let { gasRequired: gas2 }  = await assets.query.mint(3, alice.address,1000);
+        await assets.tx.mint(3, alice.address, 1000,{gasLimit: gas2 });
+
+        let { gasRequired: gas3 }  = await assets.query.burn(3, alice.address,100);
+        await assets.tx.burn(3,  alice.address,100,{gasLimit: gas3 });
+
+        // @ts-ignore
+        await expect((await api.query.assets.account(3, alice.address)).unwrapOrDefault().balance.toNumber()).to.equal(1000 - 100)
+    })
+
+    it('balance_of and total_supply are correct', async () => {
+        let { gasRequired: gas }  = await assets.query.create(4,1, {
+            value: 1000000,
+        });
+        await assets.tx.create(4, 1,{gasLimit: gas, value: 1000000 });
+
+        let { gasRequired: gas2 }  = await assets.query.mint(4, alice.address,1000);
+        await assets.tx.mint(4, alice.address,1000,{gasLimit: gas2 });
+
+        // @ts-ignore
+        await expect((await assets.query.balanceOf(4, alice.address)).value.unwrap().toNumber()).to.equal(1000)
+
+        // @ts-ignore
+        await expect((await assets.query.totalSupply(4)).value.unwrap().toNumber()).to.equal(1000)
+    })
+
+    it('approve transfer and check allowance', async () => {
+        let { gasRequired: gas }  = await assets.query.create(5,1, {
+            value: 1000000,
+        });
+        await assets.tx.create(5, 1,{gasLimit: gas, value: 1000000 });
+
+        let { gasRequired: gas2 }  = await assets.query.mint(5, assets.address, 1000);
+        await assets.tx.mint(5, assets.address,1000,{gasLimit: gas2 });
+
+        let { gasRequired: gas3 }  = await assets.query.approveTransfer(5,bob.address, 100);
+        await assets.tx.approveTransfer(5, bob.address, 100, {gasLimit: gas3 });
+
+        // @ts-ignore
+        await expect((await assets.query.allowance(5, assets.address, bob.address)).value.unwrap().toNumber()).to.equal(100)
+    })
+
+    it('approve transfer, transfer and check balances', async () => {
+        let { gasRequired: gas }  = await assets.query.create(6,1, {
+            value: 1000000,
+        });
+        await assets.tx.create(6, 1,{gasLimit: gas, value: 1000000 });
+
+        let { gasRequired: gas2 }  = await assets.query.mint(6, assets.address,1000);
+        await assets.tx.mint(6, assets.address, 1000,{gasLimit: gas2 });
+
+        let { gasRequired: gas3 }  = await assets.query.approveTransfer(6, bob.address, 100);
+        await assets.tx.approveTransfer(6, bob.address, 100, {gasLimit: gas3 });
+
+        // with Buildtx
+        // let { gasRequired: gas4}  = await assets.withSigner(bob).query.transferApproved(6, alice.address, charlie.address, 50);
+        // await assets.withSigner(bob).tx.transferApproved(6, alice.address, charlie.address, 50, {gasLimit: gas4});
+
+        // @ts-ignore
+        await expect((await assets.query.allowance(6, alice.address, bob.address)).value.unwrap().toNumber()).to.equal(50)
+
+        // @ts-ignore
+        await expect((await assets.query.balanceOf(6, alice.address)).value.unwrap().toNumber()).to.equal(950)
+
+        // @ts-ignore
+        await expect((await assets.query.balanceOf(6, bob.address)).value.unwrap().toNumber()).to.equal(0)
+
+        // @ts-ignore
+        await expect((await assets.query.balanceOf(6, charlie.address)).value.unwrap().toNumber()).to.equal(50)
+    })
     //
     // it('cancel approval', async () => {
     //     let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
