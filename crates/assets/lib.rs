@@ -187,7 +187,7 @@ impl AssetsExtension {
         id: u128,
         owner: AccountId,
     ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60012)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60013)
             .input::<(Origin, u128, AccountId)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()

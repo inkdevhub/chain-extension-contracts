@@ -160,5 +160,12 @@ pub mod contract {
             AssetsExtension::transfer_ownership(Origin::Address, asset_id, owner)?;
             Ok(())
         }
+
+        // Will fail
+        #[ink(message, payable)]
+        pub fn create_caller(&mut self, asset_id: u128, min_balance: Balance) -> Result<(), AssetsError> {
+            let contract = self.env().caller();
+            AssetsExtension::create(Origin::Caller, asset_id, contract, min_balance)
+        }
     }
 }
