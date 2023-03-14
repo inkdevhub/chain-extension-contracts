@@ -41,18 +41,14 @@ describe('ASSETS', () => {
     })
 
     afterEach(async function() {
-        let { gasRequired: gas }  = await assets.query.startDestroy(ASSET_ID);
-        await assets.tx.startDestroy(ASSET_ID,{gasLimit: gas});
-        let { gasRequired: gas2 }  = await assets.query.destroyAccounts(ASSET_ID);
-        await assets.tx.destroyAccounts(ASSET_ID,{gasLimit: gas2});
-        let { gasRequired: gas3 }  = await assets.query.destroyApprovals(ASSET_ID);
-        await assets.tx.destroyApprovals(ASSET_ID,{gasLimit: gas3});
-        let { gasRequired: gas4 }  = await assets.query.destroyAccounts(ASSET_ID);
-        await assets.tx.destroyAccounts(ASSET_ID,{gasLimit: gas4});
-        let { gasRequired: gas5 }  = await assets.query.destroyApprovals(ASSET_ID);
-        await assets.tx.destroyApprovals(ASSET_ID,{gasLimit: gas5});
-        let { gasRequired: gas6 }  = await assets.query.finishDestroy(ASSET_ID);
-        await assets.tx.finishDestroy(ASSET_ID,{gasLimit: gas6});
+        let { gasRequired: gas }  = await assets.query.transferOwnership(ASSET_ID, alice.address);
+        await assets.tx.transferOwnership(ASSET_ID, alice.address,{gasLimit: gas });
+        await buildTx(api.registry, api.tx.assets.startDestroy(ASSET_ID), alice)
+        await buildTx(api.registry, api.tx.assets.destroyAccounts(ASSET_ID), alice)
+        await buildTx(api.registry, api.tx.assets.destroyApprovals(ASSET_ID), alice)
+        await buildTx(api.registry, api.tx.assets.destroyAccounts(ASSET_ID), alice)
+        await buildTx(api.registry, api.tx.assets.destroyApprovals(ASSET_ID), alice)
+        await buildTx(api.registry, api.tx.assets.finishDestroy(ASSET_ID), alice)
     })
 
     it('create works', async () => {

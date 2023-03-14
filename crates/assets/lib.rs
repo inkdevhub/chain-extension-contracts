@@ -138,56 +138,12 @@ impl AssetsExtension {
             .call(&id)
     }
 
-    pub fn start_destroy(
-        origin: Origin,
-        id: u128,
-    ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000F)
-            .input::<(Origin, u128)>()
-            .output::<Result<(), AssetsError>, true>()
-            .handle_error_code::<AssetsError>()
-            .call(&(origin, id))
-    }
-
-    pub fn destroy_accounts(
-        origin: Origin,
-        id: u128,
-    ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60010)
-            .input::<(Origin, u128)>()
-            .output::<Result<(), AssetsError>, true>()
-            .handle_error_code::<AssetsError>()
-            .call(&(origin, id))
-    }
-
-    pub fn destroy_approvals(
-        origin: Origin,
-        id: u128,
-    ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60011)
-            .input::<(Origin, u128)>()
-            .output::<Result<(), AssetsError>, true>()
-            .handle_error_code::<AssetsError>()
-            .call(&(origin, id))
-    }
-
-    pub fn finish_destroy(
-        origin: Origin,
-        id: u128,
-    ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60012)
-            .input::<(Origin, u128)>()
-            .output::<Result<(), AssetsError>, true>()
-            .handle_error_code::<AssetsError>()
-            .call(&(origin, id))
-    }
-
     pub fn transfer_ownership(
         origin: Origin,
         id: u128,
         owner: AccountId,
     ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60013)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000F)
             .input::<(Origin, u128, AccountId)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()

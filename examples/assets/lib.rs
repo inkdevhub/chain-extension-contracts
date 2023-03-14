@@ -116,42 +116,6 @@ pub mod contract {
         }
 
         #[ink(message)]
-        pub fn start_destroy(
-            &mut self,
-            asset_id: u128,
-        ) -> Result<(), AssetsError> {
-            AssetsExtension::start_destroy(Origin::Address, asset_id)?;
-            Ok(())
-        }
-
-        #[ink(message)]
-        pub fn destroy_accounts(
-            &mut self,
-            asset_id: u128,
-        ) -> Result<(), AssetsError> {
-            AssetsExtension::destroy_accounts(Origin::Address, asset_id)?;
-            Ok(())
-        }
-
-        #[ink(message)]
-        pub fn destroy_approvals(
-            &mut self,
-            asset_id: u128,
-        ) -> Result<(), AssetsError> {
-            AssetsExtension::destroy_approvals(Origin::Address, asset_id)?;
-            Ok(())
-        }
-
-        #[ink(message)]
-        pub fn finish_destroy(
-            &mut self,
-            asset_id: u128,
-        ) -> Result<(), AssetsError> {
-            AssetsExtension::finish_destroy(Origin::Address, asset_id)?;
-            Ok(())
-        }
-
-        #[ink(message)]
         pub fn transfer_ownership(
             &mut self,
             asset_id: u128,
