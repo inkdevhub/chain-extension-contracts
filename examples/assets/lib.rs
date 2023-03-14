@@ -3,10 +3,6 @@
 
 #[ink::contract]
 pub mod contract {
-    use assets_extension::{
-        Origin,
-        AssetsError,
-    };
     use assets_extension::*;
     use ink::prelude::vec::Vec;
 

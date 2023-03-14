@@ -6,8 +6,8 @@ In `crates` folder you will find the chain-extension struct that implements call
 In `examples` folder you will find full implementation of the chain-extension struct and its integration tests in `tests` folder
 
 ### Versions
-[ink! v4.0.0-rc](https://github.com/paritytech/ink/releases/tag/v4.0.0-rc)   
-[openbrush 3.0.0 beta.1 ](https://github.com/727-Ventures/openbrush-contracts/tree/3.0.0-beta.1)
+[ink! v4.0.0](https://github.com/paritytech/ink/tree/v4.0.0)   
+[openbrush 3.0.0 ](https://github.com/727-Ventures/openbrush-contracts/tree/3.0.0)
 
 ### Chain-Extensions
 
@@ -15,11 +15,9 @@ In `examples` folder you will find full implementation of the chain-extension st
 This crate exposes `AssetsExtension` struct that implement all functions of pallet-assets chain-extension.    
 
 **Usage**
-1. add `assets_extension` and `assets-chain-extension-types ` in your `Cargo.toml` and to the `std` `features`
+1. add `assets_extension` in your `Cargo.toml` and to the `std` `features`
 ```toml
 assets_extension = {  git = "https://github.com/swanky-dapps/chain-extension-contracts", default-features = false }
-assets-chain-extension-types = { git = "https://github.com/AstarNetwork/astar-frame", branch = "polkadot-v0.9.36", default-features = false, features = ["ink-no-std"] }
-...
 
 [features]
 default = ["std"]
@@ -29,24 +27,21 @@ std = [
     "scale/std",
     "scale-info/std",
     "assets_extension/std",
-    "assets-chain-extension-types/ink-std",
 ]
 ```
 
 2. Add use statement in your contract module
 ```rust
-use assets_chain_extension_types::{
-    Origin,
-    Outcome as AssetsError,
-};
 use assets_extension::*;
-...
+
 ```
 
 3. Use struct functions directly in your contract
 ```rust
-AssetsExtension::total_supply(asset_id)
+AssetsExtension::create(Origin::Address, asset_id, contract, min_balance)
 ```
+
+Note: For now only call as contract `Origin::Address` is supported
 
 #### Dapps Staking
 This crate exposes `DappsStaking` struct that implement all functions of dapps-staking chain extension.     
@@ -98,7 +93,7 @@ Deploy using contracts UI. Instructions on [Astar docs](https://docs.astar.netwo
 
 ##### 💫 Run integration test
 First start your local node. 
-This repo needs a node version of at least `polkadot v0.9.36`
+This repo needs a node version of at least `polkadot v0.9.37`
 Recommended [swanky-node](https://github.com/AstarNetwork/swanky-node)
 
 ```sh
