@@ -94,7 +94,7 @@ Deploy using contracts UI. Instructions on [Astar docs](https://docs.astar.netwo
 ##### 💫 Run integration test
 First start your local node. 
 This repo needs a node version of at least `polkadot v0.9.37`
-Recommended [swanky-node](https://github.com/AstarNetwork/swanky-node)
+Recommended [swanky-node 1.3.0](https://github.com/AstarNetwork/swanky-node/releases/tag/v1.3.0)
 
 ```sh
 yarn
