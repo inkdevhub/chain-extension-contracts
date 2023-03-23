@@ -50,7 +50,6 @@ This crate exposes `DappsStaking` struct that implement all functions of dapps-s
 1. add `dapps_staking_extension` in your `Cargo.toml` and to the `std` `features`
 ```toml
 dapps_staking_extension = { git = "https://github.com/swanky-dapps/chain-extension-contracts", default-features = false }
-...
 
 [features]
 default = ["std"]
@@ -94,7 +93,7 @@ Deploy using contracts UI. Instructions on [Astar docs](https://docs.astar.netwo
 ##### 💫 Run integration test
 First start your local node. 
 This repo needs a node version of at least `polkadot v0.9.37`
-Recommended [swanky-node 1.3.0](https://github.com/AstarNetwork/swanky-node/releases/tag/v1.3.0)
+Recommended [swanky-node 1.4.0](https://github.com/AstarNetwork/swanky-node/releases/tag/v1.4.0)
 
 ```sh
 yarn
