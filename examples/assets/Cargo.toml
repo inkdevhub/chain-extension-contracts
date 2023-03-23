@@ -20,7 +20,6 @@ crate-type = ["cdylib"]
 [features]
 default = ["std"]
 std = [
-    "ink_metadata/std",
     "ink/std",
     "scale/std",
     "scale-info/std",

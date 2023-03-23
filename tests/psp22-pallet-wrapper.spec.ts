@@ -27,8 +27,6 @@ describe('PSP22 PALLET WRAPPER', () => {
     let psp22Constructor: psp22_constructor
     let psp22: psp22_contract;
 
-    let gasRequired: WeightV2;
-
      beforeEach(async function() {
         api = await ApiPromise.create({ provider: wsProvider });
         alice = keyring.addFromUri('//Alice');
@@ -56,8 +54,7 @@ describe('PSP22 PALLET WRAPPER', () => {
         await buildTx(api.registry, api.tx.assets.mint(ASSET_ID, {id: alice.address}, ONE.muln(1000)), alice)
         await buildTx(api.registry, api.tx.assets.approveTransfer(ASSET_ID, psp22.address, ONE.muln(100)), alice)
 
-        let { gasRequired } = await psp22.query.deposit(ONE.muln(100));
-        await psp22.tx.deposit(ONE.muln(100), {gasLimit: gasRequired });
+        await psp22.tx.deposit(ONE.muln(100));
 
         await expect((await psp22.query.balanceOf(alice.address)).value.unwrap().toString()).to.equal(ONE.muln(100).toString())
     })
@@ -66,11 +63,9 @@ describe('PSP22 PALLET WRAPPER', () => {
         await buildTx(api.registry, api.tx.assets.mint(ASSET_ID, {id: alice.address}, ONE.muln(1000)), alice)
         await buildTx(api.registry, api.tx.assets.approveTransfer(ASSET_ID, psp22.address, ONE.muln(100)), alice)
 
-        let { gasRequired } = await psp22.query.deposit(ONE.muln(100));
-        await psp22.tx.deposit(ONE.muln(100), {gasLimit: gasRequired });
+        await psp22.tx.deposit(ONE.muln(100));
 
-        let { gasRequired: gas }  = await psp22.query.transfer(bob.address, ONE.muln(100), ['']);
-        await psp22.tx.transfer(bob.address, ONE.muln(100), [''], {gasLimit: gas });
+        await psp22.tx.transfer(bob.address, ONE.muln(100), ['']);
 
         // @ts-ignore
         await expect((await api.query.assets.account(ASSET_ID, psp22.address)).unwrapOrDefault().balance.toString()).to.equal(ONE.muln(100).toString())
@@ -86,14 +81,11 @@ describe('PSP22 PALLET WRAPPER', () => {
         await buildTx(api.registry, api.tx.assets.mint(ASSET_ID, {id: alice.address}, ONE.muln(1000)), alice)
         await buildTx(api.registry, api.tx.assets.approveTransfer(ASSET_ID, psp22.address, ONE.muln(100)), alice)
 
-        let { gasRequired } = await psp22.query.deposit(ONE.muln(100));
-        await psp22.tx.deposit(ONE.muln(100), {gasLimit: gasRequired });
+        await psp22.tx.deposit(ONE.muln(100));
 
-        let { gasRequired: gas }  = await psp22.query.transfer(bob.address, ONE.muln(100), ['']);
-        await psp22.tx.transfer(bob.address, ONE.muln(100), [''], {gasLimit: gas });
+        await psp22.tx.transfer(bob.address, ONE.muln(100), ['']);
 
-        let { gasRequired: gas2 }  = await psp22.withSigner(bob).query.withdraw(ONE.muln(100));
-        await psp22.withSigner(bob).tx.withdraw(ONE.muln(100), {gasLimit: gas2 });
+        await psp22.withSigner(bob).tx.withdraw(ONE.muln(100));
 
         // @ts-ignore
         await expect((await api.query.assets.account(ASSET_ID, psp22.address)).unwrapOrDefault().balance.toNumber()).to.equal(0)

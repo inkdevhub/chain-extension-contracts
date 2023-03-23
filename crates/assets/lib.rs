@@ -15,7 +15,7 @@ pub struct AssetsExtension;
 
 impl AssetsExtension {
     pub fn create(origin: Origin, id: u128, admin: AccountId, min_balance: Balance) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60001)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20001)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -23,7 +23,7 @@ impl AssetsExtension {
     }
 
     pub fn transfer(origin: Origin, id: u128, target: AccountId, min_balance: Balance) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60002)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20002)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -31,7 +31,7 @@ impl AssetsExtension {
     }
 
     pub fn mint(origin: Origin, id: u128, beneficiary: AccountId, amount: Balance) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60003)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20003)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -39,7 +39,7 @@ impl AssetsExtension {
     }
 
     pub fn burn(origin: Origin, id: u128, who: AccountId, amount: Balance) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60004)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20004)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -47,7 +47,7 @@ impl AssetsExtension {
     }
 
     pub fn balance_of(id: u128, who: AccountId) -> Balance {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60005)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20005)
             .input::<(u128, AccountId)>()
             .output::<Balance, false>()
             .ignore_error_code()
@@ -55,7 +55,7 @@ impl AssetsExtension {
     }
 
     pub fn total_supply(id: u128) -> Balance {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60006)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20006)
             .input::<u128>()
             .output::<Balance, false>()
             .ignore_error_code()
@@ -63,7 +63,7 @@ impl AssetsExtension {
     }
 
     pub fn allowance(id: u128, owner: AccountId, delegate: AccountId) -> Balance {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60007)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20007)
             .input::<(u128, AccountId, AccountId)>()
             .output::<Balance, false>()
             .ignore_error_code()
@@ -71,7 +71,7 @@ impl AssetsExtension {
     }
 
     pub fn approve_transfer(origin: Origin, id: u128, delegate: AccountId, amount: Balance) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60008)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20008)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -79,7 +79,7 @@ impl AssetsExtension {
     }
 
     pub fn cancel_approval(origin: Origin, id: u128, delegate: AccountId) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F60009)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x20009)
             .input::<(Origin, u128, AccountId)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -93,7 +93,7 @@ impl AssetsExtension {
         destination: AccountId,
         amount: Balance,
     ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000A)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x2000A)
             .input::<(Origin, u128, AccountId, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -107,7 +107,7 @@ impl AssetsExtension {
         symbol: Vec<u8>,
         decimals: u8,
     ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000B)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x2000B)
             .input::<(Origin, u128, Vec<u8>, Vec<u8>, u8)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()
@@ -115,7 +115,7 @@ impl AssetsExtension {
     }
 
     pub fn metadata_name(id: u128) -> Vec<u8> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000C)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x2000C)
             .input::<u128>()
             .output::<Vec<u8>, false>()
             .ignore_error_code()
@@ -123,7 +123,7 @@ impl AssetsExtension {
     }
 
     pub fn metadata_symbol(id: u128) -> Vec<u8> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000D)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x2000D)
             .input::<u128>()
             .output::<Vec<u8>, false>()
             .ignore_error_code()
@@ -131,7 +131,7 @@ impl AssetsExtension {
     }
 
     pub fn metadata_decimals(id: u128) -> u8 {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000E)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x2000E)
             .input::<u128>()
             .output::<u8, false>()
             .ignore_error_code()
@@ -143,7 +143,7 @@ impl AssetsExtension {
         id: u128,
         owner: AccountId,
     ) -> Result<(), AssetsError> {
-        ::ink::env::chain_extension::ChainExtensionMethod::build(0x48F6000F)
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x2000F)
             .input::<(Origin, u128, AccountId)>()
             .output::<Result<(), AssetsError>, true>()
             .handle_error_code::<AssetsError>()

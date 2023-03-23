@@ -23,7 +23,6 @@ crate-type = ["cdylib"]
 default = ["std"]
 std = [
     "ink/std",
-    "ink_metadata/std",
     "scale/std",
     "scale-info",
     "scale-info/std",

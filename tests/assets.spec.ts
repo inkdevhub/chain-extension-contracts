@@ -29,8 +29,6 @@ describe('ASSETS', () => {
     let assetsConstructor: assets_constructor
     let assets: assets_contract;
 
-    let gasRequired: WeightV2;
-
     beforeEach(async function() {
         api = await ApiPromise.create({ provider: wsProvider });
         alice = keyring.addFromUri('//Alice');
@@ -41,8 +39,7 @@ describe('ASSETS', () => {
     })
 
     afterEach(async function() {
-        let { gasRequired: gas }  = await assets.query.transferOwnership(ASSET_ID, alice.address);
-        await assets.tx.transferOwnership(ASSET_ID, alice.address,{gasLimit: gas });
+        await assets.tx.transferOwnership(ASSET_ID, alice.address);
         await buildTx(api.registry, api.tx.assets.startDestroy(ASSET_ID), alice)
         await buildTx(api.registry, api.tx.assets.destroyAccounts(ASSET_ID), alice)
         await buildTx(api.registry, api.tx.assets.destroyApprovals(ASSET_ID), alice)
@@ -52,10 +49,7 @@ describe('ASSETS', () => {
     })
 
     it('create works', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE });
 
         const prefix = api.consts.system.ss58Prefix
         // @ts-ignore
@@ -65,42 +59,29 @@ describe('ASSETS', () => {
     })
 
     it('mint works', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE,
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE });
 
-        let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address,1000);
-        await assets.tx.mint(ASSET_ID,  alice.address,1000,{gasLimit: gas2 });
+        await assets.tx.mint(ASSET_ID,  alice.address,1000);
 
         // @ts-ignore
         await expect((await api.query.assets.account(ASSET_ID, alice.address)).unwrapOrDefault().balance.toNumber()).to.equal(1000)
     })
 
     it('burn works', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE,
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE });
 
-        let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address,1000);
-        await assets.tx.mint(ASSET_ID, alice.address, 1000,{gasLimit: gas2 });
+        await assets.tx.mint(ASSET_ID, alice.address, 1000);
 
-        let { gasRequired: gas3 }  = await assets.query.burn(ASSET_ID, alice.address,100);
-        await assets.tx.burn(ASSET_ID,  alice.address,100,{gasLimit: gas3 });
+        await assets.tx.burn(ASSET_ID,  alice.address,100,);
 
         // @ts-ignore
         await expect((await api.query.assets.account(ASSET_ID, alice.address)).unwrapOrDefault().balance.toNumber()).to.equal(1000 - 100)
     })
 
     it('balance_of and total_supply are correct', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE,
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE });
 
-        let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, alice.address,1000);
-        await assets.tx.mint(ASSET_ID, alice.address,1000,{gasLimit: gas2 });
+        await assets.tx.mint(ASSET_ID, alice.address,1000);
 
         // @ts-ignore
         await expect((await assets.query.balanceOf(ASSET_ID, alice.address)).value.unwrap().toNumber()).to.equal(1000)
@@ -110,16 +91,11 @@ describe('ASSETS', () => {
     })
 
     it('approve transfer and check allowance', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE.muln(10),
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE.muln(10) });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE.muln(10) });
 
-        let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, assets.address, ONE.muln(1000));
-        await assets.tx.mint(ASSET_ID, assets.address, ONE.muln(1000),{gasLimit: gas2 });
+        await assets.tx.mint(ASSET_ID, assets.address, ONE.muln(1000),);
 
-        let { gasRequired: gas3 }  = await assets.query.approveTransfer(ASSET_ID, bob.address, ONE.muln(100));
-        await assets.tx.approveTransfer(ASSET_ID, bob.address, ONE.muln(100), {gasLimit: gas3 });
+        await assets.tx.approveTransfer(ASSET_ID, bob.address, ONE.muln(100));
 
         // @ts-ignore
          await expect((await assets.query.allowance(ASSET_ID, assets.address, bob.address)).value.unwrap().toString()).to.equal(ONE.muln(100).toString())
@@ -130,8 +106,7 @@ describe('ASSETS', () => {
         await buildTx(api.registry, api.tx.assets.mint(ASSET_ID, alice.address, ONE.muln(1000)), alice)
         await buildTx(api.registry, api.tx.assets.approveTransfer(ASSET_ID, assets.address, ONE.muln(100)), alice)
 
-        let { gasRequired: gas}  = await assets.query.transferApproved(ASSET_ID, alice.address, bob.address, ONE.muln(50));
-        await assets.tx.transferApproved(ASSET_ID, alice.address, bob.address, ONE.muln(50), {gasLimit: gas});
+        await assets.tx.transferApproved(ASSET_ID, alice.address, bob.address, ONE.muln(50));
 
         // @ts-ignore
         await expect((await assets.query.allowance(ASSET_ID, alice.address, assets.address)).value.unwrap().toString()).to.equal(ONE.muln(50).toString())
@@ -149,19 +124,13 @@ describe('ASSETS', () => {
     })
 
     it('cancel approval', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE.muln(10),
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE.muln(10) });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE.muln(10) });
 
-        let { gasRequired: gas2 }  = await assets.query.mint(ASSET_ID, assets.address, ONE.muln(1000));
-        await assets.tx.mint(ASSET_ID, assets.address, ONE.muln(1000),{gasLimit: gas2 });
+        await assets.tx.mint(ASSET_ID, assets.address, ONE.muln(1000));
 
-        let { gasRequired: gas3 }  = await assets.query.approveTransfer(ASSET_ID, bob.address, ONE.muln(100));
-        await assets.tx.approveTransfer(ASSET_ID, bob.address, ONE.muln(100), {gasLimit: gas3 });
+        await assets.tx.approveTransfer(ASSET_ID, bob.address, ONE.muln(100));
 
-        let { gasRequired: gas4 }  = await assets.query.cancelApproval(ASSET_ID, bob.address);
-        await assets.tx.cancelApproval(ASSET_ID, bob.address,{gasLimit: gas4 });
+        await assets.tx.cancelApproval(ASSET_ID, bob.address);
 
         // @ts-ignore
         await expect((await assets.withSigner(bob).query.transferApproved(ASSET_ID, alice.address, charlie.address, 100)).value.unwrap().err).to.equal('Unapproved')
@@ -180,13 +149,9 @@ describe('ASSETS', () => {
     })
 
     it('set metadata and checks', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE.muln(10),
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE.muln(10) });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE.muln(10) });
 
-        let { gasRequired: gas3 }  = await assets.query.setMetadata(ASSET_ID, 'Shiden Token' as unknown as string[], 'TTT' as unknown as string[], 18);
-        await assets.tx.setMetadata(ASSET_ID, 'Shiden Token' as unknown as string[], 'TTT' as unknown as string[], 18, {gasLimit: gas3 });
+        await assets.tx.setMetadata(ASSET_ID, 'Shiden Token' as unknown as string[], 'TTT' as unknown as string[], 18);
 
         // @ts-ignore
         await expect((await assets.query.metadataName(1)).value.unwrap()).to.equal(stringToHex('Shiden Token'))
@@ -199,13 +164,9 @@ describe('ASSETS', () => {
     })
 
     it('transfer ownership', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE.muln(10),
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE.muln(10) });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE.muln(10) });
 
-        let { gasRequired: gas2 }  = await assets.query.transferOwnership(ASSET_ID, alice.address);
-        await assets.tx.transferOwnership(ASSET_ID, alice.address,{gasLimit: gas2 });
+        await assets.tx.transferOwnership(ASSET_ID, alice.address);
 
 
         const prefix = api.consts.system.ss58Prefix
@@ -220,10 +181,7 @@ describe('ASSETS', () => {
     })
 
     it('can not make tx on behalf of caller', async () => {
-        let { gasRequired: gas }  = await assets.query.create(ASSET_ID,1, {
-            value: ONE.muln(10),
-        });
-        await assets.tx.create(ASSET_ID, 1,{gasLimit: gas, value: ONE.muln(10) });
+        await assets.tx.create(ASSET_ID, 1,{ value: ONE.muln(10) });
 
         // @ts-ignore
         await expect((await assets.query.createCaller(2,1, {value: ONE.muln(10)})).value.unwrap().err).to.equal('OriginCannotBeCaller')
