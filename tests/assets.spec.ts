@@ -30,7 +30,7 @@ describe('ASSETS', () => {
     let assets: assets_contract;
 
     beforeEach(async function() {
-        api = await ApiPromise.create({ provider: wsProvider });
+        api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
         alice = keyring.addFromUri('//Alice');
         bob = keyring.addFromUri('//Bob');
         charlie = keyring.addFromUri('//Charlie');

@@ -28,7 +28,7 @@ describe('PSP22 PALLET WRAPPER', () => {
     let psp22: psp22_contract;
 
      beforeEach(async function() {
-        api = await ApiPromise.create({ provider: wsProvider });
+         api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
         alice = keyring.addFromUri('//Alice');
         bob = keyring.addFromUri('//Bob');
         psp22Constructor = new psp22_constructor(api, alice);
