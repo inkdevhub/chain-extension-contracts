@@ -19,7 +19,6 @@ crate-type = ["rlib"]
 default = ["std"]
 std = [
     "ink/std",
-    "ink_metadata/std",
     "scale/std",
     "scale-info/std",
 ]
