@@ -1,5 +1,5 @@
 [package]
-name = "staking_example"
+name = "scheduler_example"
 version = "0.1.0"
 authors = ["Stake Technologies <devops@stake.co.jp>"]
 edition = "2021"
@@ -10,15 +10,14 @@ ink = { version = "4.1.0", default-features = false }
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
-dapps_staking_extension = { path = "../../crates/dapps-staking", default-features = false }
+scheduler_extension = { path = "../../crates/scheduler", default-features = false }
+
+sp-weights = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.37" }
 
 [lib]
-name = "staking_example"
+name = "scheduler_example"
 path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-]
+crate-type = ["cdylib"]
 
 [features]
 default = ["std"]
@@ -26,8 +25,6 @@ std = [
     "ink/std",
     "scale/std",
     "scale-info/std",
-    "dapps_staking_extension/std"
+    "scheduler_extension/std",
+    "sp-weights/std"
 ]
-
-[profile.release]
-overflow-checks = false

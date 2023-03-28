@@ -5,14 +5,8 @@
 pub mod psp22_pallet_wrapper {
     use assets_extension::Origin;
     use assets_extension::*;
-    use ink::codegen::{
-        EmitEvent,
-        Env,
-    };
-    use openbrush::{
-        contracts::psp22::*,
-        traits::Storage,
-    };
+    use ink::codegen::{EmitEvent, Env};
+    use openbrush::{contracts::psp22::*, traits::Storage};
 
     #[ink(event)]
     pub struct Transfer {
@@ -33,7 +27,12 @@ pub mod psp22_pallet_wrapper {
     }
 
     impl psp22::Internal for PSP22WrapperContract {
-        fn _emit_transfer_event(&self, from: Option<AccountId>, to: Option<AccountId>, amount: Balance) {
+        fn _emit_transfer_event(
+            &self,
+            from: Option<AccountId>,
+            to: Option<AccountId>,
+            amount: Balance,
+        ) {
             self.env().emit_event(Transfer {
                 from,
                 to,
@@ -79,8 +78,14 @@ pub mod psp22_pallet_wrapper {
         pub fn deposit(&mut self, amount: Balance) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
             let contract = self.env().account_id();
-            AssetsExtension::transfer_approved(Origin::Address, self.asset_id, caller, contract, amount)
-                .map_err(|_| PSP22Error::Custom("transfer failed".into()))?;
+            AssetsExtension::transfer_approved(
+                Origin::Address,
+                self.asset_id,
+                caller,
+                contract,
+                amount,
+            )
+            .map_err(|_| PSP22Error::Custom("transfer failed".into()))?;
             self._mint_to(caller, amount)
         }
 

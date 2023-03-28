@@ -2,9 +2,11 @@
 members = [
     # "examples/dapps-staking",
     "examples/assets",
-    "contracts/**"
+    "examples/scheduler",
+#    "contracts/**"
 ]
 exclude = [
+    "crates/scheduler",
     "crates/dapps-staking",
     "crates/rmrk"
 ]
