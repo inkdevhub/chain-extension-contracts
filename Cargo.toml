@@ -1,7 +1,7 @@
 [workspace]
 members = [
     # "examples/dapps-staking",
-    "examples/assets",
+#    "examples/assets",
     "examples/scheduler",
 #    "contracts/**"
 ]

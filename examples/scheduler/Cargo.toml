@@ -14,6 +14,9 @@ scheduler_extension = { path = "../../crates/scheduler", default-features = fals
 
 sp-weights = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.37" }
 
+[dev-dependencies]
+ink_e2e = { version = "4.1" }
+
 [lib]
 name = "scheduler_example"
 path = "lib.rs"
@@ -28,3 +31,4 @@ std = [
     "scheduler_extension/std",
     "sp-weights/std"
 ]
+e2e-tests = []
