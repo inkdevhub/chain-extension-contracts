@@ -5,7 +5,7 @@ authors = ["Stake Technologies <devops@stake.co.jp>"]
 edition = "2021"
 
 [dependencies]
-ink = { version = "4.1.0", default-features = false }
+ink = { path="../../../../hackathon/pierre-ink/ink/crates/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
@@ -15,7 +15,8 @@ scheduler_extension = { path = "../../crates/scheduler", default-features = fals
 sp-weights = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.37" }
 
 [dev-dependencies]
-ink_e2e = { version = "4.1" }
+ink_e2e = { path="../../../../hackathon/pierre-ink/ink/crates/e2e" }
+subxt = { version = "0.27.1", default-features = false }
 
 [lib]
 name = "scheduler_example"
@@ -31,4 +32,5 @@ std = [
     "scheduler_extension/std",
     "sp-weights/std"
 ]
+ink-as-dependency = []
 e2e-tests = []

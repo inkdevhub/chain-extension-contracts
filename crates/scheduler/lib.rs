@@ -32,6 +32,14 @@ impl SchedulerExtension {
             .handle_error_code::<SchedulerError>()
             .call(&(origin, when, maybe_periodic, priority, call_input))
     }
+
+    pub fn cancel(origin: Origin, when: BlockNumber, index: u32) -> Result<(), SchedulerError> {
+        ::ink::env::chain_extension::ChainExtensionMethod::build(0x30002)
+            .input::<(Origin, BlockNumber, u32)>()
+            .output::<Result<(), SchedulerError>, true>()
+            .handle_error_code::<SchedulerError>()
+            .call(&(origin, when, index))
+    }
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, Encode, Decode, Debug)]
