@@ -5,7 +5,6 @@ pub mod contract {
     use ink::env::call::Selector;
     use ink::prelude::vec::Vec;
     use scheduler_extension::*;
-    use sp_weights::Weight;
 
     #[ink(storage)]
     #[derive(Default)]
@@ -34,8 +33,7 @@ pub mod contract {
             let call = ContractCallInput {
                 dest: self.env().account_id(),
                 data,
-                // got from contracts-UI
-                gas_limit: Weight::from_parts(3951114240u64, 629760u64),
+                gas_limit: (649901026000u64, 629760u64),
                 storage_deposit_limit: None,
                 value: 0,
                 max_weight: 1_000_000_000_000u64,

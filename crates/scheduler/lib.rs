@@ -4,7 +4,6 @@ use ink::prelude::vec::Vec;
 
 use ink::env::{DefaultEnvironment, Environment};
 use scale::{Decode, Encode};
-use sp_weights::Weight;
 
 type Balance = <DefaultEnvironment as Environment>::Balance;
 type AccountId = <DefaultEnvironment as Environment>::AccountId;
@@ -102,11 +101,11 @@ impl Default for Origin {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[derive(Encode, Decode)]
 pub struct ContractCallInput {
     pub dest: AccountId,
     pub data: Vec<u8>,
-    pub gas_limit: Weight,
+    pub gas_limit: (u64, u64),
     pub storage_deposit_limit: Option<Balance>,
     pub value: Balance,
     pub max_weight: u64,
