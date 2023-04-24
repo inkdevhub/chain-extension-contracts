@@ -28,8 +28,8 @@
     "@polkadot/api-contract": "9.13.4"
   },
   "scripts": {
-    "compile": "typechain-compiler",
-    "compile:release": "typechain-compiler --release",
+    "compile": "typechain-compiler --toolchain nightly-2023-02-07",
+    "compile:release": "typechain-compiler --release  --toolchain nightly-2023-02-07",
     "test": "mocha --require ts-node/register --recursive ./tests --extension \".spec.ts\" --exit --timeout 2000000",
     "test:single": "mocha --require ts-node/register --extension \".ts\" --exit --timeout 20000",
     "postinstall": "patch-package"
