@@ -124,10 +124,16 @@ cargo contract build
 First start your local node.  
 Deploy using contracts UI. Instructions on [Astar docs](https://docs.astar.network/docs/wasm/sc-dev/polkadotjs-ui)
 
-##### 💫 Run integration test
+##### 💫 Run Typechain integration test
 First start your local node. 
 This repo needs a node version of at least `polkadot v0.9.37`
 Recommended [swanky-node 1.4.0](https://github.com/AstarNetwork/swanky-node/releases/tag/v1.4.0)
+
+```sh
+yarn
+yarn compile
+yarn test
+```
 
 ##### 💫 Run ink! e2e test
 1. Add the path of the node (astar-local or swanky). example:
@@ -138,10 +144,4 @@ export CONTRACTS_NODE="/home/astar/Documents/astar/Astar/target/release/astar-co
 2. Run the tests
 ```sh
    cargo test --features e2e-tests
-```
-
-```sh
-yarn
-yarn compile
-yarn test
 ```
