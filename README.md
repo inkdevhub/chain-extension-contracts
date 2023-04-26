@@ -140,6 +140,7 @@ export CONTRACTS_NODE="/home/astar/Documents/astar/Astar/target/release/astar-co
    cargo test --features e2e-tests
 ```
 
+```sh
 yarn
 yarn compile
 yarn test
