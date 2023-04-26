@@ -7,6 +7,5 @@ members = [
 ]
 exclude = [
     "crates/scheduler",
-    "crates/dapps-staking",
-    "crates/rmrk"
+    "crates/dapps-staking"
 ]

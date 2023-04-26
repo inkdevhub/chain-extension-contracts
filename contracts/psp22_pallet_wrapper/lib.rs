@@ -55,7 +55,6 @@ pub mod psp22_pallet_wrapper {
         #[storage_field]
         psp22: psp22::Data,
         asset_id: u128,
-        origin: Origin,
     }
 
     impl PSP22 for PSP22WrapperContract {}

@@ -30,7 +30,7 @@ pub mod contract {
                 .to_vec();
             data.append(&mut selector);
 
-            let call = ContractCallInput {
+            let call_input = ContractCallInput {
                 dest: self.env().account_id(),
                 data,
                 gas_limit: (649901026000u64, 629760u64),
@@ -38,7 +38,7 @@ pub mod contract {
                 value: 0,
                 max_weight: 1_000_000_000_000u64,
             };
-            SchedulerExtension::schedule(Origin::Address, when, maybe_periodic, 0, call)
+            SchedulerExtension::schedule(Origin::Address, when, maybe_periodic, 0, call_input)
         }
 
         #[ink(message)]
@@ -69,7 +69,7 @@ mod e2e_tests {
     use ink_e2e::build_message;
 
     type E2EResult<T> = Result<T, Box<dyn std::error::Error>>;
-    use crate::{contract_call, contract_query};
+    use crate::{contract_call, contract_query, advance_one_block};
     use subxt::dynamic::Value;
 
     #[ink_e2e::test]
@@ -101,6 +101,9 @@ mod e2e_tests {
         // it is possible to advance block with `set_block_timestamp`
         // but it is only on the contract env, so it will no trigger calls on pallet-schedule
         // that use on_initialize hook. That is why here we send two tx that will advance 2 blocks
+        advance_one_block!(client);
+        advance_one_block!(client);
+        
         client
             .runtime_call(
                 &ink_e2e::alice(),
@@ -162,24 +165,8 @@ mod e2e_tests {
             |s| s.schedule(block_number + 2, Some((2u32, 3)))
         );
 
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
+        advance_one_block!(client);
+        advance_one_block!(client);
 
         let value = contract_query!(
             client,
@@ -190,24 +177,9 @@ mod e2e_tests {
         );
         assert_eq!(10, value);
 
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
+        advance_one_block!(client);
+        advance_one_block!(client);
+        
         let value = contract_query!(
             client,
             SchedulerRef,
@@ -217,24 +189,9 @@ mod e2e_tests {
         );
         assert_eq!(20, value);
 
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
+        advance_one_block!(client);
+        advance_one_block!(client);
+        
         let value = contract_query!(
             client,
             SchedulerRef,
@@ -244,24 +201,9 @@ mod e2e_tests {
         );
         assert_eq!(30, value);
 
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
+        advance_one_block!(client);
+        advance_one_block!(client);
+
         // then
         let value = contract_query!(
             client,
@@ -303,24 +245,8 @@ mod e2e_tests {
             |s| s.cancel(block_number + 2, 0)
         );
 
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
-        client
-            .runtime_call(
-                &ink_e2e::alice(),
-                "System",
-                "remark",
-                vec![Value::from_bytes("0x0101".as_bytes())],
-            )
-            .await
-            .expect("system remark call failed");
+        advance_one_block!(client);
+        advance_one_block!(client);
 
         // then
         let value = contract_query!(
@@ -364,5 +290,23 @@ macro_rules! contract_query {
             )
             .await
             .return_value()
+    };
+}
+
+// it is possible to advance block with `set_block_timestamp`
+// but it is only on the contract env, so it will no trigger calls on pallet-schedule
+// that use on_initialize hook. That is why here we send two tx that will advance 2 blocks
+#[macro_export]
+macro_rules! advance_one_block {
+    ($client:expr) => {
+        $client
+            .runtime_call(
+                &ink_e2e::alice(),
+                "System",
+                "remark",
+                vec![Value::from_bytes("0x0101".as_bytes())],
+            )
+            .await
+            .expect("system remark call failed")
     };
 }
