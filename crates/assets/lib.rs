@@ -2,11 +2,8 @@
 
 use ink::prelude::vec::Vec;
 
-use ink::env::{
-    DefaultEnvironment,
-    Environment,
-};
-use scale::{Encode, Decode};
+use ink::env::{DefaultEnvironment, Environment};
+use scale::{Decode, Encode};
 
 type Balance = <DefaultEnvironment as Environment>::Balance;
 type AccountId = <DefaultEnvironment as Environment>::AccountId;
@@ -14,7 +11,12 @@ type AccountId = <DefaultEnvironment as Environment>::AccountId;
 pub struct AssetsExtension;
 
 impl AssetsExtension {
-    pub fn create(origin: Origin, id: u128, admin: AccountId, min_balance: Balance) -> Result<(), AssetsError> {
+    pub fn create(
+        origin: Origin,
+        id: u128,
+        admin: AccountId,
+        min_balance: Balance,
+    ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x20001)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
@@ -22,7 +24,12 @@ impl AssetsExtension {
             .call(&(origin, id, admin, min_balance))
     }
 
-    pub fn transfer(origin: Origin, id: u128, target: AccountId, min_balance: Balance) -> Result<(), AssetsError> {
+    pub fn transfer(
+        origin: Origin,
+        id: u128,
+        target: AccountId,
+        min_balance: Balance,
+    ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x20002)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
@@ -30,7 +37,12 @@ impl AssetsExtension {
             .call(&(origin, id, target, min_balance))
     }
 
-    pub fn mint(origin: Origin, id: u128, beneficiary: AccountId, amount: Balance) -> Result<(), AssetsError> {
+    pub fn mint(
+        origin: Origin,
+        id: u128,
+        beneficiary: AccountId,
+        amount: Balance,
+    ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x20003)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
@@ -38,7 +50,12 @@ impl AssetsExtension {
             .call(&(origin, id, beneficiary, amount))
     }
 
-    pub fn burn(origin: Origin, id: u128, who: AccountId, amount: Balance) -> Result<(), AssetsError> {
+    pub fn burn(
+        origin: Origin,
+        id: u128,
+        who: AccountId,
+        amount: Balance,
+    ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x20004)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
@@ -70,7 +87,12 @@ impl AssetsExtension {
             .call(&(id, owner, delegate))
     }
 
-    pub fn approve_transfer(origin: Origin, id: u128, delegate: AccountId, amount: Balance) -> Result<(), AssetsError> {
+    pub fn approve_transfer(
+        origin: Origin,
+        id: u128,
+        delegate: AccountId,
+        amount: Balance,
+    ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x20008)
             .input::<(Origin, u128, AccountId, Balance)>()
             .output::<Result<(), AssetsError>, true>()
@@ -78,7 +100,11 @@ impl AssetsExtension {
             .call(&(origin, id, delegate, amount))
     }
 
-    pub fn cancel_approval(origin: Origin, id: u128, delegate: AccountId) -> Result<(), AssetsError> {
+    pub fn cancel_approval(
+        origin: Origin,
+        id: u128,
+        delegate: AccountId,
+    ) -> Result<(), AssetsError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x20009)
             .input::<(Origin, u128, AccountId)>()
             .output::<Result<(), AssetsError>, true>()
@@ -154,8 +180,6 @@ impl AssetsExtension {
 #[derive(PartialEq, Eq, Copy, Clone, Encode, Decode, Debug)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum AssetsError {
-    /// Success
-    Success = 0,
     /// Account balance must be greater than or equal to the transfer amount.
     BalanceLow = 1,
     /// The account to alter does not exist.
@@ -242,9 +266,11 @@ impl From<scale::Error> for AssetsError {
     }
 }
 
-
 #[derive(Clone, Copy, Decode, Encode)]
-#[cfg_attr(feature = "std", derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout))]
+#[cfg_attr(
+    feature = "std",
+    derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+)]
 pub enum Origin {
     Caller,
     Address,
