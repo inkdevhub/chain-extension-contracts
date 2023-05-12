@@ -13,31 +13,27 @@ pub struct SchedulerExtension;
 
 impl SchedulerExtension {
     pub fn schedule(
-        origin: Origin,
         when: BlockNumber,
-        maybe_periodic: Option<(BlockNumber, u32)>,
-        priority: u8,
+        id: u32,
         call_input: ContractCallInput,
     ) -> Result<(), SchedulerError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x30001)
             .input::<(
-                Origin,
                 BlockNumber,
-                Option<(BlockNumber, u32)>,
-                u8,
+                u32,
                 ContractCallInput,
             )>()
             .output::<Result<(), SchedulerError>, true>()
             .handle_error_code::<SchedulerError>()
-            .call(&(origin, when, maybe_periodic, priority, call_input))
+            .call(&(when, id, call_input))
     }
 
-    pub fn cancel(origin: Origin, when: BlockNumber, index: u32) -> Result<(), SchedulerError> {
+    pub fn cancel(id: u32) -> Result<(), SchedulerError> {
         ::ink::env::chain_extension::ChainExtensionMethod::build(0x30002)
-            .input::<(Origin, BlockNumber, u32)>()
+            .input::<u32>()
             .output::<Result<(), SchedulerError>, true>()
             .handle_error_code::<SchedulerError>()
-            .call(&(origin, when, index))
+            .call(&id)
     }
 }
 

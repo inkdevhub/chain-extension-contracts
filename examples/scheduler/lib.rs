@@ -22,7 +22,7 @@ pub mod contract {
         pub fn schedule(
             &mut self,
             when: BlockNumber,
-            maybe_periodic: Option<(BlockNumber, u32)>,
+            id: u32,
         ) -> Result<(), SchedulerError> {
             let mut data = Vec::new();
             let mut selector: Vec<u8> = Selector::new(ink::selector_bytes!("increase_value"))
@@ -33,17 +33,18 @@ pub mod contract {
             let call_input = ContractCallInput {
                 dest: self.env().account_id(),
                 data,
-                gas_limit: (649901026000u64, 629760u64),
+                gas_limit: (3951114240u64, 125952u64),
                 storage_deposit_limit: None,
                 value: 0,
                 max_weight: 1_000_000_000_000u64,
             };
-            SchedulerExtension::schedule(Origin::Address, when, maybe_periodic, 0, call_input)
+
+            SchedulerExtension::schedule(when, id, call_input)
         }
 
         #[ink(message)]
-        pub fn cancel(&mut self, when: BlockNumber, index: u32) -> Result<(), SchedulerError> {
-            SchedulerExtension::cancel(Origin::Address, when, index)
+        pub fn cancel(&mut self, id: u32) -> Result<(), SchedulerError> {
+            SchedulerExtension::cancel(id)
         }
 
         #[ink(message)]
@@ -95,7 +96,7 @@ mod e2e_tests {
             SchedulerRef,
             &ink_e2e::alice(),
             contract_acc_id,
-            |s| s.schedule(block_number + 2, None)
+            |s| s.schedule(block_number + 2, 1)
         );
 
         // it is possible to advance block with `set_block_timestamp`
@@ -138,87 +139,6 @@ mod e2e_tests {
     }
 
     #[ink_e2e::test]
-    async fn schedule_periodic_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-        // given
-        let constructor = SchedulerRef::new();
-        let contract_acc_id = client
-            .instantiate("scheduler_example", &ink_e2e::alice(), constructor, 0, None)
-            .await
-            .expect("instantiate failed")
-            .account_id;
-        let block_number = contract_query!(
-            client,
-            SchedulerRef,
-            &ink_e2e::alice(),
-            contract_acc_id,
-            |s| s.get_block_number()
-        );
-
-        // when
-        // use periodicity to schedule 3 calls on every 2 blocks
-        // NOTE: first call happen directly + 2 calls every 2 blocks
-        contract_call!(
-            client,
-            SchedulerRef,
-            &ink_e2e::alice(),
-            contract_acc_id,
-            |s| s.schedule(block_number + 2, Some((2u32, 3)))
-        );
-
-        advance_one_block!(client);
-        advance_one_block!(client);
-
-        let value = contract_query!(
-            client,
-            SchedulerRef,
-            &ink_e2e::alice(),
-            contract_acc_id,
-            |s| s.get_value()
-        );
-        assert_eq!(10, value);
-
-        advance_one_block!(client);
-        advance_one_block!(client);
-        
-        let value = contract_query!(
-            client,
-            SchedulerRef,
-            &ink_e2e::alice(),
-            contract_acc_id,
-            |s| s.get_value()
-        );
-        assert_eq!(20, value);
-
-        advance_one_block!(client);
-        advance_one_block!(client);
-        
-        let value = contract_query!(
-            client,
-            SchedulerRef,
-            &ink_e2e::alice(),
-            contract_acc_id,
-            |s| s.get_value()
-        );
-        assert_eq!(30, value);
-
-        advance_one_block!(client);
-        advance_one_block!(client);
-
-        // then
-        let value = contract_query!(
-            client,
-            SchedulerRef,
-            &ink_e2e::alice(),
-            contract_acc_id,
-            |s| s.get_value()
-        );
-        // only periodic 2 times so it should not increase
-        assert_eq!(30, value);
-
-        Ok(())
-    }
-
-    #[ink_e2e::test]
     async fn cancel_call_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
         // given
         let constructor = SchedulerRef::new();
@@ -235,14 +155,14 @@ mod e2e_tests {
             SchedulerRef,
             &ink_e2e::alice(),
             contract_acc_id,
-            |s| s.schedule(block_number + 2, None)
+            |s| s.schedule(block_number + 2, 1)
         );
         contract_call!(
             client,
             SchedulerRef,
             &ink_e2e::alice(),
             contract_acc_id,
-            |s| s.cancel(block_number + 2, 0)
+            |s| s.cancel(1)
         );
 
         advance_one_block!(client);
